@@ -95,29 +95,22 @@ func main() {
 
 func httpEcho(v string) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
+        // Ghi Text
         fmt.Fprintf(w, "Text: %s\n", v)
-        fmt.Fprintln(w)
+        fmt.Fprintln(w) // Dòng trống sau Text
 
-        fmt.Fprintln(w, "Request Headers:")
-        first := true
+        // Ghi Request Headers
+        fmt.Fprintln(w, "=== Request Headers: ===")
         for name, values := range r.Header {
-            if !first {
-                fmt.Fprintln(w) // Thêm dòng trống trước header mới (trừ header đầu tiên)
-            }
-            first = false
             for _, value := range values {
                 fmt.Fprintf(w, "%s: %s\n", name, value)
             }
         }
-        fmt.Fprintln(w)
+        fmt.Fprintln(w) // Dòng trống sau Request Headers
 
-        fmt.Fprintln(w, "Response Headers:")
-        first = true
+        // Ghi Response Headers
+        fmt.Fprintln(w, "=== Response Headers: ===")
         for name, values := range w.Header() {
-            if !first {
-                fmt.Fprintln(w) // Thêm dòng trống trước header mới
-            }
-            first = false
             for _, value := range values {
                 fmt.Fprintf(w, "%s: %s\n", name, value)
             }
