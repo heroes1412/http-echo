@@ -1,28 +1,13 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
+FROM golang:1.22-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o http-echo
 
-FROM gcr.io/distroless/static-debian12:nonroot as default
+FROM alpine:latest
+WORKDIR /app
+COPY --from=builder /app/http-echo .
 
-# TARGETOS and TARGETARCH are set automatically when --platform is provided.
-ARG TARGETOS
-ARG TARGETARCH
-ARG PRODUCT_VERSION
-ARG BIN_NAME
-ENV PRODUCT_NAME=$BIN_NAME
-
-LABEL name="http-echo" \
-      maintainer="HashiCorp Consul Team <consul@hashicorp.com>" \
-      vendor="HashiCorp" \
-      version=$PRODUCT_VERSION \
-      release=$PRODUCT_VERSION \
-      licenses="MPL-2.0" \
-      summary="A test webserver that echos a response. You know, for kids."
-
-COPY dist/$TARGETOS/$TARGETARCH/$BIN_NAME /
-COPY LICENSE /usr/share/doc/$PRODUCT_NAME/LICENSE.txt
-
-EXPOSE 5678/tcp
-
+EXPOSE 5678
 ENV ECHO_TEXT="hello-world"
 
-ENTRYPOINT ["/http-echo"]
+ENTRYPOINT ["/app/http-echo"]
